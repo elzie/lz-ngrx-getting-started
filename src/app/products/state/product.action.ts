@@ -6,11 +6,14 @@ export enum ProductActionTypes {
     ToggleProductCode = '[Product] Toggle Product Code',
     SetCurrentProduct = '[Product] Set Current Product',
     ClearCurrentProduct = '[Product] Clear Current Product',
-    InitializeCurrentProduct = '[Product] Initialize Current Product'
+    InitializeCurrentProduct = '[Product] Initialize Current Product',
+    Load = '[Product] Load',
+    LoadSuccess = '[Product] Load Success',
+    LoadFail = '[Product] Load Fail'
 }
 
 
-// Build the Action Creators
+// Build the Product Action Creators
 export class ToggleProductCode implements Action {
     readonly type = ProductActionTypes.ToggleProductCode;
 
@@ -34,11 +37,31 @@ export class InitializeCurrentProduct implements Action {
     // Define an initialized product, so no payload needed.
     // Constructor not really needed, bcus typescript provides an empty constructor.
 }
+// End of Product Action Creators
 
+// Build the Load Action Creators
+export class Load implements Action {
+    readonly type = ProductActionTypes.Load;
+}
+
+export class LoadSuccess implements Action {
+    readonly type = ProductActionTypes.LoadSuccess;
+
+    constructor(public payload: Product[]) { }
+}
+
+export class LoadFail implements Action {
+    readonly type = ProductActionTypes.LoadFail;
+
+    constructor(public payload: string) { }
+}
 
 // Define a type to Union all Action Creators.
 export type ProductActions = ToggleProductCode
     | SetCurrentProduct
     | ClearCurrentProduct
-    | InitializeCurrentProduct;
+    | InitializeCurrentProduct
+    | Load
+    | LoadSuccess
+    | LoadFail;
 //  ^ Using the Pipe-character to define the Union. Here read as 'Or'.
