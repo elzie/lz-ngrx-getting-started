@@ -14,12 +14,14 @@ export interface ProductState {
   showProductCode: boolean;
   currentProduct: Product;
   products: Product[];
+  error: string;
 }
 
 const initialState: ProductState = {
   showProductCode: true,
   currentProduct: null,
-  products: []
+  products: [],
+  error: ''
 };
 /**
  * Must be together in this order
@@ -47,6 +49,11 @@ export const getProducts = createSelector(
 /**
  * Must be together in this order
  */
+
+export const getError = createSelector(
+  getProductFeatureState,
+  state => state.error
+);
 
 // Add type where state is passed in.               and also for the ReturnType!
 export function reducer(state = initialState, action: ProductActions): ProductState {
@@ -89,7 +96,19 @@ export function reducer(state = initialState, action: ProductActions): ProductSt
           starRating: 0
         }
       };
+    case ProductActionTypes.LoadSuccess:
+      return {
+        ...state,
+        products: action.payload,
+        error: ''
+      };
 
+    case ProductActionTypes.LoadFail:
+      return {
+        ...state,
+        products: [],
+        error: action.payload
+      };
 
     /**
      * case 'TOGGLE_PRODUCT_CODE':

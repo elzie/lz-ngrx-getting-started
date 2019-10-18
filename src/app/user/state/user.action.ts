@@ -11,3 +11,4 @@ export class MaskUserName implements Action {
 }
 
 export type UserActions = MaskUserName;
+
