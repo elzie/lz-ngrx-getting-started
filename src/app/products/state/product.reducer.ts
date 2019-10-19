@@ -137,6 +137,33 @@ export function reducer(state = initialState, action: ProductActions): ProductSt
         ...state,
         error: action.payload
       };
+    case ProductActionTypes.CreateProductSuccess:
+      return {
+        ...state,
+        products: [...state.products, action.payload],
+        currentProductId: action.payload.id,
+        error: ''
+      };
+
+    case ProductActionTypes.CreateProductFail:
+      return {
+        ...state,
+        error: action.payload
+      };
+
+    case ProductActionTypes.DeleteProductSuccess:
+      return {
+        ...state,
+        products: state.products.filter(product => product.id !== action.payload),
+        currentProductId: null,
+        error: ''
+      };
+
+    case ProductActionTypes.DeleteProductFail:
+      return {
+        ...state,
+        error: action.payload
+      };
     /**
      * case 'TOGGLE_PRODUCT_CODE':
      *     console.log('existing state: ', JSON.stringify(state));

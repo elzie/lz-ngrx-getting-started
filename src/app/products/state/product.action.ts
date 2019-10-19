@@ -131,5 +131,12 @@ export type ProductActions = ToggleProductCode
     | LoadFail
     | UpdateProduct
     | UpdateProductSuccess
-    | UpdateProductFail;
+    | UpdateProductFail
+    | CreateProduct
+    | CreateProductSuccess
+    | CreateProductFail
+    | DeleteProduct
+    | DeleteProductSuccess
+    | DeleteProductFail;
+
 //  ^ Using the Pipe-character to define the Union. Here read as 'Or'.
