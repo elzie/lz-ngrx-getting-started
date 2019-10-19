@@ -12,14 +12,14 @@ export interface State extends fromRoot.State {
 
 export interface ProductState {
   showProductCode: boolean;
-  currentProduct: Product;
+  currentProductId: number | null;
   products: Product[];
   error: string;
 }
 
 const initialState: ProductState = {
   showProductCode: true,
-  currentProduct: null,
+  currentProductId: null,
   products: [],
   error: ''
 };
@@ -28,14 +28,31 @@ const initialState: ProductState = {
  */
 const getProductFeatureState = createFeatureSelector<ProductState>('products');
 
+export const getCurrentProductId = createSelector(
+  getProductFeatureState,
+  state => state.currentProductId
+);
+
 export const getShowProductCode = createSelector(
   getProductFeatureState,
   state => state.showProductCode
 );
 export const getCurrentProduct = createSelector(
   getProductFeatureState,
-  state => state.currentProduct
-);
+  getCurrentProductId,
+  (state, currentProductId) => {
+    if (currentProductId === 0) {
+      return {
+        id: 0,
+        productName: '',
+        productCode: 'New',
+        description: '',
+        starRating: 0
+      };
+    } else {
+      return currentProductId ? state.products.find(p => p.id === currentProductId) : null;
+    }
+  });
 export const getProducts = createSelector(
   getProductFeatureState,
   state => state.products
@@ -72,7 +89,7 @@ export function reducer(state = initialState, action: ProductActions): ProductSt
       console.log('payload: ', action.payload);
       return {
         ...state,
-        currentProduct: { ...action.payload }
+        currentProductId: action.payload.id
         // Passing a REFERENCE to our current Product into the store,
         // using the 'Spread' operator(...), to prevent mutation in the store.
       };
@@ -81,20 +98,14 @@ export function reducer(state = initialState, action: ProductActions): ProductSt
       console.log('existing state: ', JSON.stringify(state));
       return {
         ...state,
-        currentProduct: null
+        currentProductId: null
       };
 
     case ProductActionTypes.InitializeCurrentProduct:
       console.log('existing state: ', JSON.stringify(state));
       return {
         ...state,
-        currentProduct: {
-          id: 0,
-          productName: '',
-          productCode: 'New',
-          description: '',
-          starRating: 0
-        }
+        currentProductId: 0
       };
     case ProductActionTypes.LoadSuccess:
       return {
@@ -109,15 +120,31 @@ export function reducer(state = initialState, action: ProductActions): ProductSt
         products: [],
         error: action.payload
       };
+    case ProductActionTypes.UpdateProductSuccess:
+      // Using map method, to create a new array instead of mutating an existing array.
+      const updatedProducts = state.products.map(
+        item => action.payload.id === item.id ? action.payload : item
+      );
+      return {
+        ...state,
+        products: updatedProducts,
+        currentProductId: action.payload.id,
+        error: ''
+      };
 
+    case ProductActionTypes.UpdateProductFail:
+      return {
+        ...state,
+        error: action.payload
+      };
     /**
      * case 'TOGGLE_PRODUCT_CODE':
-          console.log('existing state: ', JSON.stringify(state));
-          console.log('payload: ', action.payload);
-          return {
-            ...state,
-            showProductCode: action.payload
-          };
+     *     console.log('existing state: ', JSON.stringify(state));
+     *     console.log('payload: ', action.payload);
+     *     return {
+     *       ...state,
+     *       showProductCode: action.payload
+     *     };
      */
     default:
       return state;
